@@ -12,7 +12,7 @@ import SwiftData
 
 class AIViewModel: ObservableObject {
 
-    let swiftDataUtils = SwiftDataUtils.shared
+    private let swiftDataUtils = SwiftDataUtils.shared
     
     static let shared = AIViewModel()
     

@@ -17,15 +17,11 @@ final class Chat {
     var created = Data()
     
     init(
-        id: UUID = UUID(),
         name: String,
         messages: [Message],
-        created: Data = Data()
     ) {
-        self.id = id
         self.name = name
         self.messages = messages
-        self.created = created
     }
     
 }
