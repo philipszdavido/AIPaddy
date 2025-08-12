@@ -10,50 +10,57 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @ObservedObject var aiViewModel = AIViewModel.shared
+    @Query private var chats: [Chat]
 
     var body: some View {
         NavigationSplitView {
             List {
-                ForEach(items) { item in
+                ForEach(chats) { chat in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        ChatAreaView(chat: chat)
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Text("\(chat.name)")
                     }
                 }
-                .onDelete(perform: deleteItems)
+                .onDelete(perform: deleteChats)
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .toolbar {
                 ToolbarItem {
                     Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                        Label("New chat", systemImage: "plus")
                     }
                 }
             }
         } detail: {
-            Text("Select an item")
+            
+            ChatAreaView(chat: chats.first ?? Chat(name: "New chat", messages: []))
+            
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
+            let newItem = Chat(name: "New chat", messages: [])
             modelContext.insert(newItem)
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
+    private func deleteChats(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(chats[index])
             }
         }
     }
+    
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(
+            for: [Item.self, Message.self, Chat.self],
+            inMemory: true
+        )
 }
