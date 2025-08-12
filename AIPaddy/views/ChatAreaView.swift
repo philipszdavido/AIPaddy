@@ -10,15 +10,40 @@ import SwiftData
 
 struct ChatAreaView: View {
     
+    @Environment(\.modelContext) var modelContext
+    let aiViewModel = AIViewModel.shared
+    
     var chat: Chat
     @State var text = ""
+    
+    @Query
+    var messages: [Message]
     
     var body: some View {
         
         VStack {
             
-            Text("Ask me anything")
-                .font(.title)
+            if messages.isEmpty {
+
+                Text("Ask me anything")
+                    .font(.title)
+
+            } else {
+                
+                ForEach(messages) { message in
+                    
+                    HStack(alignment: .top) {
+                        
+                        //if message.isAi {
+                            
+                            Spacer()
+                            
+                            Text(message.content)
+                                .padding()
+                        //}
+                    }
+                }
+            }
             
             Spacer()
             
@@ -28,6 +53,16 @@ struct ChatAreaView: View {
                     .padding(10)
                 
                 Button {
+                    
+                    aiViewModel
+                        .sendMessage(
+                            modelContext: modelContext,
+                            text,
+                            instruction: "You are an all knowing god.",
+                            palId: ""
+                        )
+                    
+                    text = ""
                     
                 } label: {
                     Image(systemName: "paperplane")

@@ -9,16 +9,17 @@ import Foundation
 import SwiftData
 
 @Model
-final class Message: Identifiable {
+final class Message {
     
     var id = UUID()
     var created: Date
-    var text: String
+    var content: String
+    var isAi: Bool = false
     
-    init(id: UUID = UUID(), created: Date, text: String) {
+    init(id: UUID = UUID(), created: Date, content: String) {
         self.id = id
         self.created = created
-        self.text = text
+        self.content = content
     }
     
 }

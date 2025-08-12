@@ -7,12 +7,56 @@
 
 import Foundation
 import Combine
+import FoundationModels
+import SwiftData
 
 class AIViewModel: ObservableObject {
 
+    let swiftDataUtils = SwiftDataUtils.shared
+    
     static let shared = AIViewModel()
     
-    func sendMessage(message: String) {
+    var model: SystemLanguageModel {
+        return SystemLanguageModel.default
+    }
+    
+    var options: GenerationOptions {
+        return GenerationOptions(temperature: 2.0)
+    }
+
+    func sendMessage(modelContext: ModelContext, _ content: String, instruction: String?, palId: String?) {
+        
+        _ = swiftDataUtils
+            .insertMessage(modelContext: modelContext, message: content)
+        
+        Task {
+            
+            do {
+                
+                let session = LanguageModelSession(instructions: instruction)
+                
+                let stream = session.streamResponse(to: content)
+                
+                let message = swiftDataUtils.insertMessage(
+                    modelContext: modelContext,
+                    message: "Typing..."
+                )
+                
+                for try await response in stream {
+                                        
+                    message.content = response.content
+                    
+                }
+                
+                // message.isPartial = false
+                                
+                
+            } catch {
+                
+                
+            }
+            
+        }
         
     }
     
