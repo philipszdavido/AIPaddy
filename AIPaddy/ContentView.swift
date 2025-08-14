@@ -21,9 +21,19 @@ struct ContentView: View {
                         ChatAreaView(chat: chat)
                     } label: {
                         Text("\(chat.name)")
+                    }.contextMenu {
+                        
+                        Button("Remove") {
+                            
+                            modelContext.delete(chat);
+                            
+                        }
+                        
                     }
+
                 }
                 .onDelete(perform: deleteChats)
+                
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .toolbar {

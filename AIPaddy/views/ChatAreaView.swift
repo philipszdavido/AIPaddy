@@ -30,17 +30,36 @@ struct ChatAreaView: View {
 
             } else {
                 
-                ForEach(messages) { message in
-                    
-                    HStack(alignment: .top) {
+                ScrollView(.vertical) {
+                    ForEach(messages) { message in
                         
-                        //if message.isAi {
+                        HStack(alignment: .top) {
                             
-                            Spacer()
+                            if !message.isAi {
+                                
+                                Spacer()
+                                
+                            }
                             
                             Text(message.content)
                                 .padding()
-                        //}
+                            
+                            if message.isAi {
+                                Spacer()
+                            }
+                            
+                        }
+                        .background(message.isAi ? Color.gray.opacity(0.2) : Color.gray.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .contextMenu {
+                            
+                            Button("Remove") {
+                                
+                                modelContext.delete(message);
+                                
+                            }
+                            
+                        }
                     }
                 }
             }
@@ -71,6 +90,18 @@ struct ChatAreaView: View {
             }
             
         }.padding()
+            .onAppear {
+                
+                // for message in messages {
+                    
+                    // modelContext.delete(message)
+                    
+                    // let msg = Message(content: "Hello");
+                    // msg.isAi = [false, true].randomElement()!;
+                    // modelContext.insert(msg)
+                // }
+                
+            }
         
     }
     

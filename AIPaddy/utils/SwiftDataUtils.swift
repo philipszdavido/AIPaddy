@@ -19,7 +19,7 @@ class SwiftDataUtils {
     }
     
     func insertMessage(modelContext: ModelContext, message: String) -> Message {
-        let message = Message(created: Date(), content: message);
+        let message = Message(content: message);
         modelContext.insert(message)
         return message
     }
