@@ -11,14 +11,15 @@ import SwiftData
 @Model
 final class Chat {
     
-    var id = UUID()
+    var created = Date()
     var name: String
-    var messages: [Message] = []
-    var created = Data()
     
+    @Relationship(deleteRule: .cascade)
+    var messages: [Message] = []
+        
     init(
         name: String,
-        messages: [Message],
+        messages: [Message] = [],
     ) {
         self.name = name
         self.messages = messages

@@ -15,50 +15,34 @@ struct ChatAreaView: View {
     
     var chat: Chat
     @State var text = ""
-    
-    @Query
-    var messages: [Message]
-    
+        
     var body: some View {
         
         VStack {
             
-            if messages.isEmpty {
-
+            if chat.messages.isEmpty {
+                
                 Text("Ask me anything")
                     .font(.title)
-
+                
             } else {
                 
-                ScrollView(.vertical) {
-                    ForEach(messages) { message in
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical) {
                         
-                        HStack(alignment: .top) {
+                        ForEach(chat.messages.sorted(by: {
+                            $0.created < $1.created
+                        })) { message in
                             
-                            if !message.isAi {
-                                
-                                Spacer()
-                                
-                            }
-                            
-                            Text(message.content)
-                                .padding()
-                            
-                            if message.isAi {
-                                Spacer()
-                            }
+                            MessageRow(message: message)
+                                .id(message.id)
                             
                         }
-                        .background(message.isAi ? Color.gray.opacity(0.2) : Color.gray.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .contextMenu {
-                            
-                            Button("Remove") {
-                                
-                                modelContext.delete(message);
-                                
-                            }
-                            
+                        
+                    }
+                    .onChange(of: chat.messages.count) {
+                        if let last = chat.messages.last {
+                            proxy.scrollTo(last.id, anchor: .bottom)
                         }
                     }
                 }
@@ -68,20 +52,15 @@ struct ChatAreaView: View {
             
             HStack {
                 
-                TextField("New Chat", text: $text)
+                TextField("Tell me something...", text: $text)
+                    .onSubmit {
+                        sendMessage()
+                    }
                     .padding(10)
                 
                 Button {
                     
-                    aiViewModel
-                        .sendMessage(
-                            modelContext: modelContext,
-                            text,
-                            instruction: "You are an all knowing god.",
-                            palId: ""
-                        )
-                    
-                    text = ""
+                    sendMessage()
                     
                 } label: {
                     Image(systemName: "paperplane")
@@ -90,24 +69,26 @@ struct ChatAreaView: View {
             }
             
         }.padding()
-            .onAppear {
-                
-                // for message in messages {
-                    
-                    // modelContext.delete(message)
-                    
-                    // let msg = Message(content: "Hello");
-                    // msg.isAi = [false, true].randomElement()!;
-                    // modelContext.insert(msg)
-                // }
-                
-            }
-        
     }
     
+    func sendMessage() {
+        aiViewModel
+            .sendMessage(
+                modelContext: modelContext,
+                text,
+                instruction: Instructions.god,
+                chat: chat,
+                { data in },
+                palId: ""
+            )
+        
+        text = ""
+        
+    }
+        
 }
 
 #Preview {
     ChatAreaView(chat: Chat(name: "", messages: []))
-        .modelContainer(for: [Chat.self], inMemory: true)
+        .modelContainer(for: [Chat.self, Message.self], inMemory: true)
 }

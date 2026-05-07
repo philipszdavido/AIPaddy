@@ -18,10 +18,17 @@ class SwiftDataUtils {
         return chat
     }
     
-    func insertMessage(modelContext: ModelContext, message: String) -> Message {
-        let message = Message(content: message);
+    func insertChat(modelContext: ModelContext, text: String, msgs: [Message]) -> Chat {
+        let chat = Chat(name: text, messages: msgs);
+        modelContext.insert(chat);
+        return chat
+    }
+
+    func insertMessage(modelContext: ModelContext, message: String, chat: Chat, isAi: Bool) -> Message {
+        let message = Message(content: message, chat: chat);
+        message.isAi = isAi;
         modelContext.insert(message)
         return message
     }
-    
+        
 }

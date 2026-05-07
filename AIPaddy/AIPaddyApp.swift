@@ -10,9 +10,8 @@ import SwiftData
 
 @main
 struct AIPaddyApp: App {
-    var sharedModelContainer: ModelContainer = {
+    let sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
             Message.self,
             Chat.self
         ])

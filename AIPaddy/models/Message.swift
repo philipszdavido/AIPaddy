@@ -11,13 +11,14 @@ import SwiftData
 @Model
 final class Message {
     
-    var id = UUID()
     var created = Date()
     var content: String
     var isAi: Bool = false
+    var chat: Chat?
     
-    init(content: String) {
+    init(content: String, chat: Chat? = nil) {
         self.content = content
+        self.chat = chat
     }
     
 }
