@@ -16,26 +16,18 @@ class AIViewModel: ObservableObject {
     
     static let shared = AIViewModel()
     
-    lazy var model: SystemLanguageModel = {
+    private lazy var model: SystemLanguageModel = {
         SystemLanguageModel.default
     }()
     
-    var options: GenerationOptions {
+    private var options: GenerationOptions {
         return GenerationOptions(temperature: 2.0)
     }
 
     func generateTitle(from text: String) async throws -> String {
 
         let session = LanguageModelSession(
-            instructions: """
-            Generate a very short chat title.
-
-            Rules:
-            - Maximum 5 words
-            - No quotes
-            - No punctuation
-            - Summarize the topic clearly
-            """
+            instructions: Instructions.summarizeTitle
         )
 
         let response = try await session.respond(
